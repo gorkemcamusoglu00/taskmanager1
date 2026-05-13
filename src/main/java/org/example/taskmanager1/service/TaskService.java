@@ -69,4 +69,28 @@ public class TaskService {
 
         return false;
     }
+
+    public List<Task> getTasksByCompletedStatus(boolean completed) {
+        return taskRepository.findByCompleted(completed);
+    }
+
+    public List<Task> searchTasksByTitle(String title) {
+        return taskRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    public List<Task> filterTasksByTitleAndCompleted(String title, boolean completed) {
+        return taskRepository.findByTitleContainingIgnoreCaseAndCompleted(title, completed);
+    }
+
+    public long countTasksByCompletedStatus(boolean completed) {
+        return taskRepository.countByCompleted(completed);
+    }
+
+    public boolean existsTaskByTitle(String title) {
+        return taskRepository.existsByTitleIgnoreCase(title);
+    }
+
+    public List<Task> getLatestFiveTasks() {
+        return taskRepository.findTop5ByOrderByIdDesc();
+    }
 }
