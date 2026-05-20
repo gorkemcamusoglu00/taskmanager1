@@ -95,4 +95,9 @@ public class TaskController {
     public List<Task> getLatestFiveTasks() {
         return taskService.getLatestFiveTasks();
     }
+
+    @PostMapping("/rollback-test")
+    public ResponseEntity<Task> createTaskWithRollbackTest(@Valid @RequestBody TaskRequest taskRequest) {
+        Task createdTask = taskService.createTaskWithRollbackTest(taskRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);}
 }

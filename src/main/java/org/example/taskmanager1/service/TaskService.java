@@ -4,11 +4,13 @@ import org.example.taskmanager1.dto.TaskRequest;
 import org.example.taskmanager1.entity.Task;
 import org.example.taskmanager1.repository.TaskRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class TaskService {
 
     private final TaskRepository taskRepository;
@@ -25,6 +27,7 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
+    @Transactional
     public Task createTask(TaskRequest taskRequest) {
         Task task = new Task();
 
@@ -40,6 +43,7 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
+    @Transactional
     public Task updateTask(Long id, TaskRequest taskRequest) {
         Optional<Task> optionalTask = taskRepository.findById(id);
 
@@ -59,6 +63,7 @@ public class TaskService {
         return null;
     }
 
+    @Transactional
     public boolean deleteTask(Long id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
 
@@ -92,5 +97,27 @@ public class TaskService {
 
     public List<Task> getLatestFiveTasks() {
         return taskRepository.findTop5ByOrderByIdDesc();
+    }
+
+    @Transactional
+    public Task createTaskWithRollbackTest(TaskRequest taskRequest) {
+        Task task = new Task();
+
+        task.setTitle(taskRequest.getTitle());
+        task.setDescription(taskRequest.getDescription());
+
+        if (taskRequest.getCompleted() != null) {
+            task.setCompleted(taskRequest.getCompleted());
+        } else {
+            task.setCompleted(false);
+        }
+
+        Task savedTask = taskRepository.save(task);
+
+        if (true) {
+            throw new RuntimeException("Rollback testi için bilinçli hata oluşturuldu.");
+        }
+
+        return savedTask;
     }
 }
